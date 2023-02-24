@@ -1,0 +1,4 @@
+notification_publisher_send:
+    path: /notification-publisher
+    controller: App\NotificationPublisher\UserInterface\API\PublisherController::send
+    methods: POST

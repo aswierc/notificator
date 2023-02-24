@@ -1,0 +1,18 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping">
+    <entity
+        name="App\NotificationPublisher\Domain\Identifier"
+        table="app_message_identifier">
+        <id name="id" type="string" column="id" length="100" />
+        <field name="identifier" column="identifier" />
+        <field name="type" column="type" />
+
+        <field name="createdAt" type="datetime" column="created_at">
+            <options>
+                <option name="default">CURRENT_TIMESTAMP</option>
+            </options>
+        </field>
+        <many-to-one field="message" target-entity="App\NotificationPublisher\Domain\Message" inversed-by="attempts">
+            <join-column name="message_id" />
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

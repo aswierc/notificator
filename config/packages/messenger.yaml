@@ -1,0 +1,7 @@
+framework:
+    messenger:
+        reset_on_message: true
+        transports:
+             sync: 'sync://'
+        routing:
+            App\NotificationPublisher\Application\Command\SendMessageCommand: sync 

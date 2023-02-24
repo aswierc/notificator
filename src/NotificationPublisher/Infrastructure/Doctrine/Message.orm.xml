@@ -1,0 +1,31 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping">
+    <entity
+        name="App\NotificationPublisher\Domain\Message"
+        table="app_message"
+        repository-class="App\NotificationPublisher\Infrastructure\Repository\MessageRepository">
+        <id name="id" type="string" column="id" length="100" />
+        <field name="content" type="text" column="content" />
+        <field name="createdAt" type="datetime" column="created_at">
+            <options>
+                <option name="default">CURRENT_TIMESTAMP</option>
+            </options>
+        </field>
+        <field name="updatedAt" type="datetime" column="updated_at">
+            <options>
+                <option name="default">CURRENT_TIMESTAMP</option>
+            </options>
+        </field>
+        <one-to-many field="identifiers" target-entity="App\NotificationPublisher\Domain\Identifier" mapped-by="message">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+        <one-to-many field="attempts" target-entity="App\NotificationPublisher\Domain\Attempt" mapped-by="message">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+    </entity>
+</doctrine-mapping>

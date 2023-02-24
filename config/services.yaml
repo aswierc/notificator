@@ -1,0 +1,53 @@
+parameters:
+    twilio.account_sid: '%env(string:TWILIO_ACCOUNT_SID)%'
+    twilio.token: '%env(string:TWILIO_TOKEN)%'
+    twilio.from: '%env(string:TWILIO_FROM)%'
+
+    aws.ses.key: '%env(string:AWS_SES_KEY)%'
+    aws.ses.secret: '%env(string:AWS_SES_SECRET)%'
+    
+
+services:
+    _defaults:
+        autowire: true   
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Kernel.php'
+
+    _instanceof:
+        App\NotificationPublisher\Application\Service\Channel:
+            tags: [ 'notification_publisher.channel' ]
+          
+        App\NotificationPublisher\Infrastructure\Channel\SMSChannel\SMSProvider:
+            tags: [ 'notification_publisher.channel.sms.provider' ]
+        
+        App\NotificationPublisher\Infrastructure\Channel\EmailChannel\EmailProvider:
+            tags: [ 'notification_publisher.channel.email.provider' ]
+        
+    App\NotificationPublisher\Application\Service\SenderService:
+        public: true
+        arguments: 
+            $channels: !tagged_iterator 'notification_publisher.channel'
+        
+    App\NotificationPublisher\Infrastructure\Channel\SMSChannel:
+        arguments: 
+            $providers: !tagged_iterator 'notification_publisher.channel.sms.provider'
+            
+    App\NotificationPublisher\Infrastructure\Channel\EmailChannel:
+        arguments:
+            $providers: !tagged_iterator 'notification_publisher.channel.email.provider'
+
+    App\NotificationPublisher\Infrastructure\Twilio\TwilioSMSProvider:
+        arguments:
+            $from: '%twilio.from%'
+            $accountSid: '%twilio.account_sid%'
+            $token: '%twilio.token%'
+        
+    App\NotificationPublisher\Infrastructure\AWS\SES\SESEmailProvider: 
+        arguments:
+            $key: '%aws.ses.key%'
+            $secret: '%aws.ses.secret%'
+            
